@@ -1,0 +1,13 @@
+[Unit]
+Description=A simple Flask app
+After=network.target
+
+[Service]
+User=your_user
+WorkingDirectory=/path/to/your/project
+ExecStart=/usr/bin/python3 app.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+

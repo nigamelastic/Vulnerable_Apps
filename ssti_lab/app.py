@@ -1,0 +1,89 @@
+from flask import Flask, request, render_template_string
+from markupsafe import escape
+
+app = Flask(__name__)
+
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    username = request.form.get('username', 'Guest')
+    
+    # This is the vulnerable part - direct string interpolation
+    template = f'''
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Welcome</title>
+        <style>
+            body, html {{
+                height: 100%;
+                margin: 0;
+                font-family: Arial, sans-serif;
+            }}
+            .container {{
+                display: flex;
+                height: 100%;
+            }}
+            .image-container {{
+                flex: 1;
+                background-image: url('/static/background.jpg');
+                background-size: cover;
+                background-position: center;
+            }}
+            .content-container {{
+                flex: 1;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background-color: #f0f0f0;
+            }}
+            .form-container {{
+                background-color: white;
+                padding: 2em;
+                border-radius: 10px;
+                box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            }}
+            input[type="text"] {{
+                width: 100%;
+                padding: 10px;
+                margin: 10px 0;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+            }}
+            input[type="submit"] {{
+                width: 100%;
+                padding: 10px;
+                background-color: #4CAF50;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+            }}
+            input[type="submit"]:hover {{
+                background-color: #45a049;
+            }}
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="image-container"></div>
+            <div class="content-container">
+                <div class="form-container">
+                    <h1>Welcome!</h1>
+                    <p>Hello, {username}!</p>
+                    <form method="POST">
+                        <input type="text" name="username" placeholder="Enter your username">
+                        <input type="submit" value="Submit">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </body>
+    </html>
+    '''
+    
+    return render_template_string(template, username=username)
+
+if __name__ == '__main__':
+    app.run(debug=True)
