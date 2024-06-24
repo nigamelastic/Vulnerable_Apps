@@ -7,7 +7,7 @@ app = Flask(__name__)
 def index():
     username = request.form.get('username', 'Guest')
     
-    # This is the vulnerable part - direct string interpolation
+   
     template = f'''
     <!DOCTYPE html>
     <html lang="en">
